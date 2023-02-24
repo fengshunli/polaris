@@ -1,0 +1,94 @@
+successMessage: RoleBinding 未引用允许 Pod exec 或 attach 的角色
+failureMessage: RoleBinding 引用了一个允许 Pods/exec，允许 pods/attach，或者不存在的角色
+target: rbac.authorization.k8s.io/RoleBinding
+schemaString: |
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  anyOf:
+    # Pass RoleBindings that point to a ClusterRole.
+    - required: ["roleRef"]
+      properties:
+        roleRef:
+          required: ["apiGroup", "kind", "name"]
+          properties:
+            apiGroup:
+              type: string
+              const: "rbac.authorization.k8s.io"
+            kind:
+              type: string
+              const: "Role"
+    # Do not alert on default RoleBindings.
+    - required: ["metadata"]
+      properties:
+        metadata:
+          type: object
+          required: ["name"]
+          properties:
+            name:
+              type: string
+              anyOf:
+                - pattern: '^system:'
+                - const: "gce:podsecuritypolicy:calico-sa"
+    - required: ["roleRef"]
+      properties:
+        roleRef:
+          required: ["apiGroup", "kind", "name"]
+          properties:
+            apiGroup:
+              type: string
+              const: "rbac.authorization.k8s.io"
+            kind:
+              type: string
+              const: "Role"
+            name:
+              type: string
+              minLength: 1
+additionalSchemaStrings:
+  rbac.authorization.k8s.io/Role: |
+    type: object
+    # This schema is validated for all roleBindings, regardless of their roleRef.
+    {{ if eq .roleRef.kind "Role" }}
+    {{ if and (not (hasPrefix .metadata.name "system:")) (ne .metadata.name "gce:podsecuritypolicy:calico-sa") }}
+    required: ["metadata", "rules"]
+    allOf:
+      - properties:
+          metadata:
+            required: ["name"]
+            properties:
+              name:
+                type: string
+                const: "{{ .roleRef.name }}"
+      - properties:
+          rules:
+            type: array
+            items:
+              type: object
+              not:
+                required: ["apiGroups", "resources", "verbs"]
+                properties:
+                  apiGroups:
+                    type: array
+                    contains:
+                      type: string
+                      anyOf:
+                        - const: ""
+                        - const: '*'
+                  resources:
+                    type: array
+                    contains:
+                      type: string
+                      anyOf:
+                        - const: '*'
+                        - const: "pods/exec"
+                        - const: "pods/attach"
+                  verbs:
+                    type: array
+                    contains:
+                      type: string
+                      anyOf:
+                        - const: '*'
+                        # An exec is also possible by `get`ing a web socket.
+                        - const: 'get'
+                        - const: 'create'
+    {{ end }}
+    {{ end }}

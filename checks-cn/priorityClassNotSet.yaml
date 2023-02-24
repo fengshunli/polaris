@@ -1,0 +1,13 @@
+successMessage: 已配置优先级
+failureMessage: 应配置优先级
+category: Security
+target: PodSpec
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  required:
+  - priorityClassName
+mutations:
+  - op: add
+    path: /priorityClassName
+    value: high-priority

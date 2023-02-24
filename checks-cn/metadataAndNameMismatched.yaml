@@ -1,0 +1,17 @@
+successMessage: 标签 app.kubernetes.io/name 与 metadata.name 匹配
+failureMessage: 标签 app.kubernetes.io/name 应该与 metadata.name 匹配
+target: Controller
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  properties:
+    metadata:
+      type: object
+      required: ["labels"]
+      properties:
+        labels:
+          type: object
+          required: ["app.kubernetes.io/name"]
+          properties:
+            app.kubernetes.io/name:
+              const: "{{ .metadata.name }}"

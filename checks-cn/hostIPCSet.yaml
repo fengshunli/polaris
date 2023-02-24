@@ -1,0 +1,14 @@
+successMessage: 主机 IPC 没有配置
+failureMessage: 不应配置主机 IPC
+category: Security
+target: PodSpec
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  properties:
+    hostIPC:
+      not:
+        const: true
+mutations:
+  - op: remove
+    path: /hostIPC

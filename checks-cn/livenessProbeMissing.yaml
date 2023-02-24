@@ -1,0 +1,26 @@
+successMessage: 存活探针已配置
+failureMessage: 存活探针应配置
+category: Reliability
+controllers:
+  exclude:
+  - Job
+  - CronJob
+containers:
+  exclude:
+  - initContainer
+target: Container
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  required:
+  - livenessProbe
+  properties:
+    livenessProbe:
+      type: object
+      not:
+        const: null
+mutations:
+  - op: add
+    path: /livenessProbe
+    value: {"exec": { "command": [ "cat", "/tmp/healthy" ] }, "initialDelaySeconds": 5, "periodSeconds": 5 }
+    comment: "TODO: 更改存活探针设置以反映应用程序的健康状况"

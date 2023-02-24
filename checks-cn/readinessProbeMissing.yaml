@@ -1,0 +1,26 @@
+successMessage: 就绪探针已配置
+failureMessage: 应配置就绪探针
+category: Reliability
+controllers:
+  exclude:
+  - Job
+  - CronJob
+containers:
+  exclude:
+  - initContainer
+target: Container
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  required:
+  - readinessProbe
+  properties:
+    readinessProbe:
+      type: object
+      not:
+        const: null
+mutations:
+  - op: add
+    path: /readinessProbe
+    value: {"exec": { "command": [ "cat", "/tmp/healthy" ] }, "initialDelaySeconds": 5, "periodSeconds": 5 }
+    comment: "TODO: 更改就绪探针设置以反映您的应用程序为服务流量做好准备"

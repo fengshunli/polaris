@@ -1,0 +1,31 @@
+successMessage: 容器的 capabilities 属性没有任何危险的配置
+failureMessage: 容器的 capabilities 属性不应该有任何危险的配置
+category: Security
+target: Container
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  properties:
+    securityContext:
+      type: object
+      properties:
+        capabilities:
+          type: object
+          properties:
+            add:
+              type: array
+              allOf:
+                - not:
+                    contains:
+                      pattern: '^(?i)ALL$'
+                - not:
+                    contains:
+                      pattern: '^(?i)SYS_ADMIN$'
+                - not:
+                    contains:
+                      pattern: '^(?i)NET_ADMIN$'
+
+
+mutations:
+  - op: remove
+    path: /securityContext/capabilities/add

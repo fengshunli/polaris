@@ -9,6 +9,7 @@
 *.so
 *.dylib
 polaris
+.idea
 
 !cmd/polaris
 !deploy/helm/polaris

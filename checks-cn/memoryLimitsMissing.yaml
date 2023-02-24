@@ -1,0 +1,32 @@
+successMessage: 内存限制已配置
+failureMessage: 应配置内存限制
+category: Efficiency
+target: Container
+containers:
+  exclude:
+  - initContainer
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  required:
+  - resources
+  properties:
+    resources:
+      type: object
+      required:
+      - limits
+      properties:
+        limits:
+          type: object
+          required:
+          - memory
+          properties:
+            memory:
+              type: string
+              not:
+                const: ''
+mutations:
+  - op: add
+    path: /resources/limits/memory
+    value: "512Mi"
+    comment: "TODO: 将此设置为您希望工作负载使用的最大内存量"

@@ -1,0 +1,15 @@
+successMessage: 镜像拉取策略是 "Always"
+failureMessage: 镜像拉取策略应该配置为 "Always"
+category: Reliability
+target: Container
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  required:
+  - imagePullPolicy
+  properties:
+    imagePullPolicy:
+      const: Always
+mutations:
+  - op: add
+    path: /imagePullPolicy
+    value: Always

@@ -1,0 +1,21 @@
+successMessage: Pod 具有有效的拓扑扩展约束
+failureMessage: Pod 应该配置有效的拓扑扩展约束
+category: Reliability
+target: PodSpec
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  required:
+    - topologySpreadConstraints
+  properties:
+    topologySpreadConstraints:
+      type: array
+      items:
+        type: object
+        properties:
+          topologyKey:
+            anyOf:
+              - type: string
+                const: "kubernetes.io/hostname"
+              - type: string
+                const: "topology.kubernetes.io/zone"
