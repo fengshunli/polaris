@@ -1,0 +1,28 @@
+successMessage: 没有以特权模式启动
+failureMessage: 不应以特权模式启动
+category: Security
+target: Container
+schemaTarget: PodSpec
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  definitions:
+    notBadSecurityContext:
+      type: object
+      properties:
+        privileged:
+          not:
+            const: true
+  type: object
+  properties:
+    securityContext:
+      $ref: "#/definitions/notBadSecurityContext"
+    containers:
+      type: array
+      items:
+        properties:
+          securityContext:
+            $ref: "#/definitions/notBadSecurityContext"
+mutations:
+  - op: add
+    path: /securityContext/privileged
+    value: false

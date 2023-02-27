@@ -1,0 +1,19 @@
+successMessage: Ingress 已配置 TLS
+failureMessage: Ingress 没有配置 TLS
+category: Security
+target: networking.k8s.io/Ingress
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  type: object
+  required:
+  - spec
+  properties:
+    spec:
+      type: object
+      required:
+      - tls
+      properties:
+        tls:
+          type: array
+          not:
+            const: null

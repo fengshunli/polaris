@@ -1,0 +1,47 @@
+successMessage: 文件系统已配置只读
+failureMessage: 文件系统应配置为只读
+category: Security
+target: Container
+schemaTarget: PodSpec
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  definitions:
+    goodSecurityContext:
+      type: object
+      anyOf:
+      - required:
+        - readOnlyRootFilesystem
+        properties:
+          readOnlyRootFilesystem:
+            const: true
+    notBadSecurityContext:
+      type: object
+      properties:
+        readOnlyRootFilesystem:
+          const: true
+  type: object
+  anyOf:
+  - required:
+    - securityContext
+    properties:
+      securityContext:
+        $ref: "#/definitions/goodSecurityContext"
+      containers:
+        type: array
+        items:
+          properties:
+            securityContext:
+              $ref: "#/definitions/notBadSecurityContext"
+  - properties:
+      containers:
+        type: array
+        items:
+          required:
+          - securityContext
+          properties:
+            securityContext:
+              $ref: "#/definitions/goodSecurityContext"
+mutations:
+  - op: add
+    path: /securityContext/readOnlyRootFilesystem
+    value: true

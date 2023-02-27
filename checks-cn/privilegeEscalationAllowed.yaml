@@ -1,0 +1,48 @@
+successMessage: 不允许特权升级
+failureMessage: 不应配置允许特权升级
+category: Security
+target: Container
+schemaTarget: PodSpec
+schema:
+  '$schema': http://json-schema.org/draft-07/schema
+  definitions:
+    goodSecurityContext:
+      type: object
+      anyOf:
+      - required:
+        - allowPrivilegeEscalation
+        properties:
+          allowPrivilegeEscalation:
+            const: false
+    notBadSecurityContext:
+      type: object
+      properties:
+        allowPrivilegeEscalation:
+          const: false
+  type: object
+  anyOf:
+  - required:
+    - securityContext
+    properties:
+      securityContext:
+        $ref: "#/definitions/goodSecurityContext"
+      containers:
+        type: array
+        items:
+          properties:
+            securityContext:
+              $ref: "#/definitions/notBadSecurityContext"
+  - properties:
+      containers:
+        type: array
+        items:
+          required:
+          - securityContext
+          properties:
+            securityContext:
+              $ref: "#/definitions/goodSecurityContext"
+
+mutations:
+  - op: add
+    path: /securityContext/allowPrivilegeEscalation
+    value: false
